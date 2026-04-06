@@ -164,13 +164,36 @@ for s in nifty_stocks:
     except:
         ticker_text += f"{s.replace('.NS','')} N/A | "
 
-st.markdown(f"""
-<div style="background:black; color:#00ffcc; padding:10px;">
-<marquee>{ticker_text}</marquee>
-</div>
-""", unsafe_allow_html=True)
+ticker_html = f"""
+<style>
+.ticker {{
+    width: 100%;
+    overflow: hidden;
+    white-space: nowrap;
+    background: black;
+    color: #00ffcc;
+    padding: 12px;
+    font-size: 16px;
+    font-weight: bold;
+}}
 
-st.markdown("---")
+.ticker span {{
+    display: inline-block;
+    padding-left: 100%;
+    animation: ticker 40s linear infinite;
+}}
+
+@keyframes ticker {{
+    0% {{ transform: translateX(0); }}
+    100% {{ transform: translateX(-100%); }}
+}}
+</style>
+
+<div class="ticker">
+<span>{ticker_text}</span>
+</div>
+"""
+st.markdown(ticker_html, unsafe_allow_html=True)
 
 # -------------------- INPUT --------------------
 stock_name = st.text_input("🔍 Enter Stock (e.g., TCS.NS)")
