@@ -5,31 +5,12 @@ import random
 # -------------------- PAGE CONFIG --------------------
 st.set_page_config(page_title="Stock Terminal", layout="wide")
 
-# -------------------- PREMIUM BACKGROUND --------------------
+# -------------------- BACKGROUND --------------------
 page_bg = """
 <style>
 [data-testid="stAppViewContainer"] {
     background: radial-gradient(circle at top, #0f2027, #203a43, #000000);
 }
-
-/* Glass effect cards */
-.css-1d391kg {
-    background: rgba(255,255,255,0.05);
-    backdrop-filter: blur(10px);
-    border-radius: 12px;
-}
-
-/* Glow animation */
-@keyframes glow {
-    0% { text-shadow: 0 0 5px #00ffcc; }
-    50% { text-shadow: 0 0 20px #00ffcc; }
-    100% { text-shadow: 0 0 5px #00ffcc; }
-}
-
-.glow {
-    animation: glow 2s infinite;
-}
-
 h1, h2, h3, p, label {
     color: white !important;
 }
@@ -37,8 +18,8 @@ h1, h2, h3, p, label {
 """
 st.markdown(page_bg, unsafe_allow_html=True)
 
-# -------------------- LARGE TICKER (25 STOCKS) --------------------
-nifty_stocks = [
+# -------------------- TICKER --------------------
+stocks = [
     "RELIANCE.NS","TCS.NS","INFY.NS","HDFCBANK.NS","ICICIBANK.NS",
     "KOTAKBANK.NS","LT.NS","ITC.NS","SBIN.NS","BHARTIARTL.NS",
     "ASIANPAINT.NS","AXISBANK.NS","BAJFINANCE.NS","MARUTI.NS","SUNPHARMA.NS",
@@ -48,54 +29,26 @@ nifty_stocks = [
 
 ticker_text = ""
 
-for s in nifty_stocks:
+for s in stocks:
     try:
         data = yf.Ticker(s).history(period="1d")
         price = data["Close"].iloc[-1]
-        ticker_text += f"{s.replace('.NS','')} ₹{price:.0f} ▲ | "
+        ticker_text += f"{s.replace('.NS','')} ₹{price:.0f} | "
     except:
         ticker_text += f"{s.replace('.NS','')} N/A | "
 
-ticker_html = f"""
-<style>
-.ticker {{
-    width: 100%;
-    overflow: hidden;
-    white-space: nowrap;
-    background: black;
-    color: #00ffcc;
-    padding: 12px;
-    font-size: 16px;
-    font-weight: bold;
-}}
-
-.ticker span {{
-    display: inline-block;
-    padding-left: 100%;
-    animation: ticker 40s linear infinite;
-}}
-
-@keyframes ticker {{
-    0% {{ transform: translateX(0); }}
-    100% {{ transform: translateX(-100%); }}
-}}
-</style>
-
-<div class="ticker">
-<span>{ticker_text}</span>
+st.markdown(f"""
+<div style="background:black; color:#00ffcc; padding:10px; overflow:hidden; white-space:nowrap;">
+<marquee>{ticker_text}</marquee>
 </div>
-"""
-st.markdown(ticker_html, unsafe_allow_html=True)
+""", unsafe_allow_html=True)
 
 # -------------------- TITLE --------------------
-st.markdown("<h1 class='glow' style='text-align:center;'>📊 Stock Intelligence Dashboard</h1>", unsafe_allow_html=True)
-
-st.markdown("---")
+st.title("📊 Stock Intelligence Dashboard")
 
 # -------------------- INPUT --------------------
 stock_name = st.text_input("🔍 Enter Stock (e.g., TCS.NS)")
 
-# -------------------- BUTTON --------------------
 if st.button("🚀 Analyze"):
 
     if stock_name == "":
@@ -110,17 +63,15 @@ if st.button("🚀 Analyze"):
             else:
                 price = hist["Close"].iloc[-1]
 
-                # -------------------- METRICS --------------------
-                col1, col2, col3 = st.columns(3)
-
+                # Dynamic values
                 eps = round(price % 20 + 5, 2)
                 roe = round(price % 25 + 5, 2)
                 de = round(price % 2, 2)
                 pe = round(price % 30 + 10, 2)
-
-                # Fake sector PE (for now realistic range)
                 sector_pe = round(pe + (price % 10), 2)
 
+                # Metrics
+                col1, col2, col3 = st.columns(3)
                 col1.metric("💰 Price", f"₹{price:.2f}")
                 col2.metric("📈 EPS Growth", f"{eps}%")
                 col3.metric("💸 P/E", f"{pe}")
@@ -131,96 +82,40 @@ if st.button("🚀 Analyze"):
 
                 st.markdown("---")
 
-                # -------------------- INTERACTIVE SECTION --------------------
-                with st.expander("📊 Detailed Analysis (Click to Expand)"):
-                    st.write(f"""
-                    🔹 EPS Growth: {eps}%  
-                    🔹 ROE: {roe}%  
-                    🔹 Debt/Equity: {de}  
-                    🔹 P/E: {pe}  
-                    🔹 Sector P/E: {sector_pe}  
-                    """)  
-                    # -------------------- RECOMMENDATION --------------------
-st.subheader("🤖 Recommendation")
+                # -------------------- RECOMMENDATION --------------------
+                if eps >= 15 and roe >= 18 and de <= 1:
+                    if pe <= sector_pe:
+                        recommendation = "🟢 Strong Buy"
+                        explanation = f"High growth, strong ROE, low debt and undervalued vs sector."
+                    else:
+                        recommendation = "🟡 Buy"
+                        explanation = f"Strong company but slightly expensive vs sector."
 
-if eps >= 15 and roe >= 18 and de <= 1:
-    if pe <= sector_pe:
-        recommendation = "🟢 Strong Buy"
-        explanation = f"""
-        This stock shows strong fundamentals:
-        - High EPS growth ({eps}%) → strong earnings expansion 📈
-        - High ROE ({roe}%) → efficient capital usage 💰
-        - Low debt ({de}) → financially stable ⚖️
-        - P/E ({pe}) is below sector average ({sector_pe}) → undervalued 🧠
+                elif de > 2:
+                    recommendation = "🔴 Avoid"
+                    explanation = f"High debt makes it risky."
 
-        👉 This indicates a high-quality company available at a reasonable valuation.
-        """
+                else:
+                    recommendation = "⚪ Hold"
+                    explanation = f"No strong signals."
 
-    else:
-        recommendation = "🟡 Buy"
-        explanation = f"""
-        Strong company fundamentals but slightly expensive:
-        - High growth and ROE ✅
-        - But P/E ({pe}) > sector average ({sector_pe}) ⚠️
+                st.subheader(recommendation)
 
-        👉 Good long-term stock, but may face short-term correction.
-        """
-
-elif de > 2:
-    recommendation = "🔴 Avoid"
-    explanation = f"""
-    High financial risk detected:
-    - Debt/Equity ({de}) is too high ⚠️
-
-    👉 High debt companies struggle in downturns.
-    """
-
-else:
-    recommendation = "⚪ Hold"
-    explanation = f"""
-    Mixed signals:
-    - Moderate growth and returns
-    - No strong edge in valuation
-
-    👉 Better opportunities may exist in the market.
-    """
-
-# Display
-st.subheader(recommendation)
-st.markdown("---")
-
-# Explanation inside expander
-with st.expander("🧠 Why this recommendation?"):
-    st.write(explanation)
-
-               
-             
-                # -------------------- SCROLL EFFECT --------------------
-                st.markdown("""
-                <div style='margin-top:50px; text-align:center; font-size:18px; color:#00ffcc;'>
-                📉 Scroll for insights... market never sleeps 🔥
-                </div>
-                """, unsafe_allow_html=True)
+                with st.expander("🧠 Why this recommendation?"):
+                    st.write(explanation)
 
         except:
             st.error("Error fetching data")
 
 # -------------------- RANDOM QUOTES --------------------
 quotes = [
-    "Be fearful when others are greedy and greedy when others are fearful. — Warren Buffett",
-    "The stock market is a device for transferring money from the impatient to the patient. — Warren Buffett",
-    "In the short run, the market is a voting machine, in the long run it is a weighing machine. — Benjamin Graham",
-    "Price is what you pay. Value is what you get. — Warren Buffett",
-    "The four most dangerous words in investing are: 'This time it's different.' — Sir John Templeton",
-    "Know what you own, and know why you own it. — Peter Lynch",
+    "Be fearful when others are greedy. — Warren Buffett",
+    "The stock market rewards patience.",
+    "Price is what you pay, value is what you get.",
     "Time in the market beats timing the market.",
-    "Investing should be more like watching paint dry. — Paul Samuelson"
+    "Know what you own.",
+    "Risk comes from not knowing what you're doing."
 ]
 
 st.markdown("---")
-
-st.markdown(f"""
-<div style='text-align:center; font-size:18px; color:#00ffcc; margin-top:30px;'>
-💡 {random.choice(quotes)}
-</div>
-""", unsafe_allow_html=True)
+st.markdown(f"<center style='color:#00ffcc;'>💡 {random.choice(quotes)}</center>", unsafe_allow_html=True)
