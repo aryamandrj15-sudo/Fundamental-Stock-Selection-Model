@@ -1,5 +1,6 @@
 import streamlit as st
 import yfinance as yf
+import random
 
 # -------------------- PAGE CONFIG --------------------
 st.set_page_config(page_title="Stock Terminal", layout="wide")
@@ -140,17 +141,59 @@ if st.button("🚀 Analyze"):
                     🔹 Sector P/E: {sector_pe}  
                     """)
 
-                # -------------------- RECOMMENDATION --------------------
-                st.subheader("🤖 Recommendation")
+               
+               # -------------------- RECOMMENDATION --------------------
+st.subheader("🤖 Recommendation")
 
-                if eps >= 15 and roe >= 18 and de <= 1:
-                    if pe <= sector_pe:
-                        st.success("🟢 Strong Buy (Undervalued vs Sector)")
-                    else:
-                        st.warning("🟡 Buy (Overvalued vs Sector)")
-                else:
-                    st.info("⚪ Hold")
+if eps >= 15 and roe >= 18 and de <= 1:
+    if pe <= sector_pe:
+        recommendation = "🟢 Strong Buy"
+        explanation = f"""
+        This stock shows strong fundamentals:
+        - High EPS growth ({eps}%) → strong earnings expansion 📈
+        - High ROE ({roe}%) → efficient capital usage 💰
+        - Low debt ({de}) → financially stable ⚖️
+        - P/E ({pe}) is below sector average ({sector_pe}) → undervalued 🧠
 
+        👉 This indicates a high-quality company available at a reasonable valuation.
+        """
+
+    else:
+        recommendation = "🟡 Buy"
+        explanation = f"""
+        Strong company fundamentals but slightly expensive:
+        - High growth and ROE ✅
+        - But P/E ({pe}) > sector average ({sector_pe}) ⚠️
+
+        👉 Good long-term stock, but may face short-term correction.
+        """
+
+elif de > 2:
+    recommendation = "🔴 Avoid"
+    explanation = f"""
+    High financial risk detected:
+    - Debt/Equity ({de}) is too high ⚠️
+
+    👉 High debt companies struggle in downturns.
+    """
+
+else:
+    recommendation = "⚪ Hold"
+    explanation = f"""
+    Mixed signals:
+    - Moderate growth and returns
+    - No strong edge in valuation
+
+    👉 Better opportunities may exist in the market.
+    """
+
+# Display
+st.subheader(recommendation)
+st.markdown("---")
+
+# Explanation inside expander
+with st.expander("🧠 Why this recommendation?"):
+    st.write(explanation)
                 # -------------------- SCROLL EFFECT --------------------
                 st.markdown("""
                 <div style='margin-top:50px; text-align:center; font-size:18px; color:#00ffcc;'>
@@ -160,3 +203,23 @@ if st.button("🚀 Analyze"):
 
         except:
             st.error("Error fetching data")
+
+# -------------------- RANDOM QUOTES --------------------
+quotes = [
+    "Be fearful when others are greedy and greedy when others are fearful. — Warren Buffett",
+    "The stock market is a device for transferring money from the impatient to the patient. — Warren Buffett",
+    "In the short run, the market is a voting machine, in the long run it is a weighing machine. — Benjamin Graham",
+    "Price is what you pay. Value is what you get. — Warren Buffett",
+    "The four most dangerous words in investing are: 'This time it's different.' — Sir John Templeton",
+    "Know what you own, and know why you own it. — Peter Lynch",
+    "Time in the market beats timing the market.",
+    "Investing should be more like watching paint dry. — Paul Samuelson"
+]
+
+st.markdown("---")
+
+st.markdown(f"""
+<div style='text-align:center; font-size:18px; color:#00ffcc; margin-top:30px;'>
+💡 {random.choice(quotes)}
+</div>
+""", unsafe_allow_html=True)
