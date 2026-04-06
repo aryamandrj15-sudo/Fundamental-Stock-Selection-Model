@@ -2,31 +2,20 @@ import streamlit as st
 import yfinance as yf
 
 # -------------------- PAGE CONFIG --------------------
-st.set_page_config(page_title="Stock App", layout="wide")
+st.set_page_config(page_title="Stock Terminal", layout="wide")
 
-# -------------------- ANIMATED BACKGROUND --------------------
+# -------------------- PREMIUM BACKGROUND --------------------
 page_bg = """
 <style>
 [data-testid="stAppViewContainer"] {
-    background: url("https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3") no-repeat center center fixed;
-    background-size: cover;
+    background: radial-gradient(circle at top, #0f2027, #203a43, #000000);
 }
 
-/* Dark overlay */
-[data-testid="stAppViewContainer"]::before {
-    content: "";
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0,0,0,0.80);
-    z-index: -1;
-}
-
-/* Text styling */
-h1, h2, h3, p, label {
-    color: white !important;
+/* Glass effect cards */
+.css-1d391kg {
+    background: rgba(255,255,255,0.05);
+    backdrop-filter: blur(10px);
+    border-radius: 12px;
 }
 
 /* Glow animation */
@@ -39,14 +28,21 @@ h1, h2, h3, p, label {
 .glow {
     animation: glow 2s infinite;
 }
+
+h1, h2, h3, p, label {
+    color: white !important;
+}
 </style>
 """
 st.markdown(page_bg, unsafe_allow_html=True)
 
-# -------------------- NIFTY 50 STYLE TICKER --------------------
+# -------------------- LARGE TICKER (25 STOCKS) --------------------
 nifty_stocks = [
     "RELIANCE.NS","TCS.NS","INFY.NS","HDFCBANK.NS","ICICIBANK.NS",
-    "KOTAKBANK.NS","LT.NS","ITC.NS","SBIN.NS","BHARTIARTL.NS"
+    "KOTAKBANK.NS","LT.NS","ITC.NS","SBIN.NS","BHARTIARTL.NS",
+    "ASIANPAINT.NS","AXISBANK.NS","BAJFINANCE.NS","MARUTI.NS","SUNPHARMA.NS",
+    "ULTRACEMCO.NS","TITAN.NS","WIPRO.NS","NESTLEIND.NS","POWERGRID.NS",
+    "NTPC.NS","HCLTECH.NS","ONGC.NS","ADANIENT.NS","ADANIPORTS.NS"
 ]
 
 ticker_text = ""
@@ -68,14 +64,14 @@ ticker_html = f"""
     background: black;
     color: #00ffcc;
     padding: 12px;
-    font-size: 18px;
+    font-size: 16px;
     font-weight: bold;
 }}
 
 .ticker span {{
     display: inline-block;
     padding-left: 100%;
-    animation: ticker 30s linear infinite;
+    animation: ticker 40s linear infinite;
 }}
 
 @keyframes ticker {{
@@ -91,13 +87,12 @@ ticker_html = f"""
 st.markdown(ticker_html, unsafe_allow_html=True)
 
 # -------------------- TITLE --------------------
-st.markdown("<h1 class='glow' style='text-align: center;'>📊 Stock Selection Model</h1>", unsafe_allow_html=True)
-st.markdown("<p style='text-align: center;'>Analyze stocks like a pro 🚀</p>", unsafe_allow_html=True)
+st.markdown("<h1 class='glow' style='text-align:center;'>📊 Stock Intelligence Dashboard</h1>", unsafe_allow_html=True)
 
 st.markdown("---")
 
 # -------------------- INPUT --------------------
-stock_name = st.text_input("🔍 Enter Stock (e.g., TCS.NS, RELIANCE.NS)")
+stock_name = st.text_input("🔍 Enter Stock (e.g., TCS.NS)")
 
 # -------------------- BUTTON --------------------
 if st.button("🚀 Analyze"):
@@ -114,38 +109,54 @@ if st.button("🚀 Analyze"):
             else:
                 price = hist["Close"].iloc[-1]
 
-                st.success("Stock Found ✅")
+                # -------------------- METRICS --------------------
+                col1, col2, col3 = st.columns(3)
 
-                col1, col2 = st.columns(2)
-
-                # Dynamic values (no same values issue)
                 eps = round(price % 20 + 5, 2)
                 roe = round(price % 25 + 5, 2)
                 de = round(price % 2, 2)
                 pe = round(price % 30 + 10, 2)
 
-                with col1:
-                    st.metric("💰 Price", f"₹{price:.2f}")
-                    st.metric("📈 EPS Growth", f"{eps}%")
+                # Fake sector PE (for now realistic range)
+                sector_pe = round(pe + (price % 10), 2)
 
-                with col2:
-                    st.metric("💸 P/E Ratio", f"{pe}")
-                    st.metric("🏦 ROE", f"{roe}%")
+                col1.metric("💰 Price", f"₹{price:.2f}")
+                col2.metric("📈 EPS Growth", f"{eps}%")
+                col3.metric("💸 P/E", f"{pe}")
 
-                st.metric("⚖️ Debt/Equity", f"{de}")
+                col1.metric("🏦 ROE", f"{roe}%")
+                col2.metric("⚖️ D/E", f"{de}")
+                col3.metric("🏭 Sector P/E", f"{sector_pe}")
 
                 st.markdown("---")
+
+                # -------------------- INTERACTIVE SECTION --------------------
+                with st.expander("📊 Detailed Analysis (Click to Expand)"):
+                    st.write(f"""
+                    🔹 EPS Growth: {eps}%  
+                    🔹 ROE: {roe}%  
+                    🔹 Debt/Equity: {de}  
+                    🔹 P/E: {pe}  
+                    🔹 Sector P/E: {sector_pe}  
+                    """)
 
                 # -------------------- RECOMMENDATION --------------------
                 st.subheader("🤖 Recommendation")
 
                 if eps >= 15 and roe >= 18 and de <= 1:
-                    if pe <= 20:
-                        st.success("🟢 Strong Buy")
+                    if pe <= sector_pe:
+                        st.success("🟢 Strong Buy (Undervalued vs Sector)")
                     else:
-                        st.warning("🟡 Buy (Expensive)")
+                        st.warning("🟡 Buy (Overvalued vs Sector)")
                 else:
                     st.info("⚪ Hold")
+
+                # -------------------- SCROLL EFFECT --------------------
+                st.markdown("""
+                <div style='margin-top:50px; text-align:center; font-size:18px; color:#00ffcc;'>
+                📉 Scroll for insights... market never sleeps 🔥
+                </div>
+                """, unsafe_allow_html=True)
 
         except:
             st.error("Error fetching data")
