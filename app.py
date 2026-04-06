@@ -1,7 +1,7 @@
 import streamlit as st
 import yfinance as yf
 import random
-from openai import OpenAI
+
 
 # -------------------- API --------------------
 client = OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
@@ -19,28 +19,104 @@ with col2:
     if st.button("🤖 AI Helper"):
         st.session_state.show_ai = True
 
-# -------------------- AI CHAT --------------------
+# -------------------- AI HELPER --------------------
 if "show_ai" not in st.session_state:
     st.session_state.show_ai = False
 
+col1, col2 = st.columns([4,1])
+
+with col2:
+    if st.button("🤖 AI Helper"):
+        st.session_state.show_ai = not st.session_state.show_ai
+
 if st.session_state.show_ai:
-    st.sidebar.title("🤖 AI Stock Assistant")
+    st.sidebar.title("🤖 Stock Assistant")
 
-    user_question = st.sidebar.text_input("Ask anything about stocks:")
+    question = st.sidebar.text_input("Ask about stocks:")
 
-    if user_question:
-        with st.sidebar:
-            with st.spinner("Thinking..."):
-                response = client.chat.completions.create(
-                    model="gpt-4o-mini",
-                    messages=[
-                        {"role": "system", "content": "You are a stock market expert. Answer all questions about stocks, fundamentals, and technical analysis in simple terms."},
-                        {"role": "user", "content": user_question}
-                    ]
-                )
+    if question:
+        q = question.lower()
 
-                answer = response.choices[0].message.content
-                st.write(answer)
+        # -------------------- ANSWERS --------------------
+        if "pe" in q:
+            st.sidebar.write("""
+📊 **P/E Ratio (Price to Earnings)**  
+Shows how expensive a stock is.
+
+👉 Formula: Price / Earnings  
+👉 High P/E = Expensive  
+👉 Low P/E = Undervalued (sometimes)
+
+Use with growth (EPS) for better understanding.
+""")
+
+        elif "roe" in q:
+            st.sidebar.write("""
+💰 **ROE (Return on Equity)**  
+Measures how efficiently a company uses money.
+
+👉 Higher ROE = Better  
+👉 15%+ is considered strong  
+👉 Shows management quality
+""")
+
+        elif "debt" in q or "de" in q:
+            st.sidebar.write("""
+⚖️ **Debt to Equity Ratio**  
+Shows financial risk.
+
+👉 <1 = Safe  
+👉 >2 = Risky  
+👉 High debt = dangerous in downturns
+""")
+
+        elif "rsi" in q:
+            st.sidebar.write("""
+📉 **RSI (Relative Strength Index)**  
+Momentum indicator (0–100)
+
+👉 Above 70 = Overbought  
+👉 Below 30 = Oversold  
+👉 Helps in timing entries
+""")
+
+        elif "buy" in q:
+            st.sidebar.write("""
+🟢 **When to Buy a Stock?**
+
+Look for:
+✔ High EPS growth  
+✔ High ROE  
+✔ Low debt  
+✔ Reasonable P/E  
+
+👉 Buy good companies at fair price
+""")
+
+        elif "sell" in q:
+            st.sidebar.write("""
+🔴 **When to Sell a Stock?**
+
+✔ Fundamentals deteriorate  
+✔ Too much debt  
+✔ Overvaluation  
+✔ Better opportunities exist
+""")
+
+        else:
+            st.sidebar.write("""
+🤖 I can help with:
+
+• P/E ratio  
+• ROE  
+• Debt  
+• RSI  
+• Buy/Sell decisions  
+
+👉 Try asking:
+“What is PE ratio?”
+“Is high ROE good?”
+""")
 
 # -------------------- TICKER --------------------
 stocks = [
