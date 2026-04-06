@@ -90,11 +90,11 @@ if "show_ai" not in st.session_state:
     st.session_state.show_ai = False
 
 # Top bar
-st.markdown("<h1 class='glow' style='text-align:center;'>📊 Stock Intelligence Dashboard</h1>", unsafe_allow_html=True)
+st.markdown("<h1 class='glow' style='text-align:center;'>📊 Stock Intelligence Dashboard 📊</h1>", unsafe_allow_html=True)
 st.markdown("<p style='text-align:center; color:#00ffcc;'>Your mini stock analysis terminal 🚀</p>", unsafe_allow_html=True)
 
 # Button (fixed position)
-if st.button("🤖 Open AI Helper"):
+if st.button("🤖 Stock Bot"):
     st.session_state.show_ai = not st.session_state.show_ai
 
 # Sidebar AI (always renders properly now)
@@ -268,7 +268,7 @@ ticker_html = f"""
 st.markdown(ticker_html, unsafe_allow_html=True)
 
 # -------------------- INPUT --------------------
-stock_name = st.text_input("🔍 Enter Stock (e.g., TCS.NS)")
+stock_name = st.text_input("🔍 Enter Stock (e.g., TCS.NS,RELIANCE.NS)")
 
 # -------------------- ANALYSIS --------------------
 if st.button("🚀 Analyze"):
