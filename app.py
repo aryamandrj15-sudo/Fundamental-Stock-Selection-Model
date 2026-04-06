@@ -9,52 +9,39 @@ st.set_page_config(page_title="Stock Terminal", layout="wide")
 BACKGROUND = """
 <style>
 
-/* MAIN BACKGROUND */
+/* MAIN DARK GRADIENT */
 [data-testid="stAppViewContainer"] {
-    background: linear-gradient(to bottom, #000000, #0f2027);
+    background: linear-gradient(to bottom, #000000, #0b1c26, #000000);
 }
 
-/* GRID LIKE STOCK CHART */
+/* SUBTLE CHART GRID */
 [data-testid="stAppViewContainer"]::before {
     content: "";
     position: fixed;
     width: 100%;
     height: 100%;
-    background-image: 
-        linear-gradient(rgba(0,255,204,0.05) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(0,255,204,0.05) 1px, transparent 1px);
-    background-size: 50px 50px;
+    background-image:
+        linear-gradient(rgba(0,255,204,0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,255,204,0.04) 1px, transparent 1px);
+    background-size: 60px 60px;
     z-index: 0;
 }
 
-/* CANDLESTICK STYLE (SUBTLE) */
+/* GLOW LINES (LIKE PRICE MOVEMENT) */
 [data-testid="stAppViewContainer"]::after {
     content: "";
     position: fixed;
     width: 100%;
     height: 100%;
-    background-image: repeating-linear-gradient(
-        to right,
-        rgba(0,255,0,0.12) 0px,
-        rgba(0,255,0,0.12) 3px,
-        transparent 3px,
-        transparent 60px
-    ),
-    repeating-linear-gradient(
-        to right,
-        rgba(255,0,0,0.08) 0px,
-        rgba(255,0,0,0.08) 2px,
-        transparent 2px,
-        transparent 90px
-    );
-    opacity: 0.3;
-    animation: floatCandle 25s linear infinite;
+    background: radial-gradient(circle at 20% 30%, rgba(0,255,204,0.08), transparent 40%),
+                radial-gradient(circle at 80% 70%, rgba(0,255,204,0.06), transparent 40%);
+    animation: floatGlow 12s ease-in-out infinite alternate;
 }
 
 /* ANIMATION */
-@keyframes floatCandle {
-    from { transform: translateY(0px); }
-    to { transform: translateY(-150px); }
+@keyframes floatGlow {
+    0% { transform: translateY(0px); }
+    100% { transform: translateY(-40px); }
 }
 
 /* TEXT */
@@ -62,7 +49,7 @@ h1, h2, h3, p, label {
     color: white !important;
 }
 
-/* GLOW */
+/* TITLE GLOW */
 .glow {
     text-shadow: 0 0 20px #00ffcc;
 }
