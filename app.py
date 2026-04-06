@@ -7,47 +7,100 @@ st.set_page_config(page_title="Stock Terminal", layout="wide")
 # -------------------- BACKGROUND --------------------
 BACKGROUND = """
 <style>
+
+/* MAIN BACKGROUND */
 [data-testid="stAppViewContainer"] {
     background: linear-gradient(-45deg, #000000, #0f2027, #203a43, #000000);
     background-size: 400% 400%;
     animation: gradientBG 12s ease infinite;
 }
 
-/* Floating glow particles */
-[data-testid="stAppViewContainer"]::before {
+/* FAKE CANDLESTICKS */
+[data-testid="stAppViewContainer"]::after {
     content: "";
     position: fixed;
     width: 100%;
     height: 100%;
-    background-image: radial-gradient(circle, rgba(0,255,204,0.15) 1px, transparent 1px);
-    background-size: 40px 40px;
-    animation: moveGrid 20s linear infinite;
+    background-image: repeating-linear-gradient(
+        to right,
+        rgba(0,255,0,0.15) 0px,
+        rgba(0,255,0,0.15) 2px,
+        transparent 2px,
+        transparent 40px
+    ),
+    repeating-linear-gradient(
+        to right,
+        rgba(255,0,0,0.1) 0px,
+        rgba(255,0,0,0.1) 2px,
+        transparent 2px,
+        transparent 60px
+    );
+    animation: candlesMove 20s linear infinite;
+    z-index: 0;
 }
 
-/* Animation */
+/* ANIMATIONS */
 @keyframes gradientBG {
     0% { background-position: 0% 50%; }
     50% { background-position: 100% 50%; }
     100% { background-position: 0% 50%; }
 }
 
-@keyframes moveGrid {
-    from { transform: translateY(0px); }
+@keyframes candlesMove {
+    from { transform: translateY(0); }
     to { transform: translateY(-200px); }
 }
 
-/* Text styling */
+/* TEXT */
 h1, h2, h3, p, label {
     color: white !important;
 }
 
-/* Glow */
+/* GLOW TITLE */
 .glow {
     text-shadow: 0 0 15px #00ffcc;
 }
+
+/* HOVER CARDS */
+[data-testid="metric-container"] {
+    background: rgba(255,255,255,0.05);
+    border-radius: 12px;
+    padding: 10px;
+    transition: 0.3s;
+}
+
+[data-testid="metric-container"]:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 20px #00ffcc;
+}
+
+/* INPUT BOX */
+input {
+    background-color: rgba(255,255,255,0.05) !important;
+    color: white !important;
+}
+
+/* BUTTON */
+button[kind="primary"] {
+    background: linear-gradient(45deg, #00ffcc, #007cf0);
+    border: none;
+    color: black;
+    font-weight: bold;
+}
+
+/* PULSE EFFECT FOR TICKER */
+.ticker {
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% { text-shadow: 0 0 5px #00ffcc; }
+    50% { text-shadow: 0 0 20px #00ffcc; }
+    100% { text-shadow: 0 0 5px #00ffcc; }
+}
+
 </style>
 """
-
 st.markdown(BACKGROUND, unsafe_allow_html=True)
 
 # -------------------- AI HELPER --------------------
@@ -200,35 +253,11 @@ for s in nifty_stocks:
     except:
         ticker_text += f"{s.replace('.NS','')} N/A | "
 
-ticker_html = f"""
-<style>
-.ticker {{
-    width: 100%;
-    overflow: hidden;
-    white-space: nowrap;
-    background: black;
-    color: #00ffcc;
-    padding: 12px;
-    font-size: 16px;
-    font-weight: bold;
-}}
-
-.ticker span {{
-    display: inline-block;
-    padding-left: 100%;
-    animation: ticker 40s linear infinite;
-}}
-
-@keyframes ticker {{
-    0% {{ transform: translateX(0); }}
-    100% {{ transform: translateX(-100%); }}
-}}
-</style>
-
-<div class="ticker">
-<span>{ticker_text}</span>
+st.markdown(f"""
+<div class="ticker" style="background:black; color:#00ffcc; padding:10px;">
+<marquee>{ticker_text}</marquee>
 </div>
-"""
+""", unsafe_allow_html=True)
 st.markdown(ticker_html, unsafe_allow_html=True)
 
 # -------------------- INPUT --------------------
