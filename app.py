@@ -18,8 +18,8 @@ h1, h2, h3, p, label {
 """
 st.markdown(page_bg, unsafe_allow_html=True)
 
-# -------------------- TICKER --------------------
-stocks = [
+# -------------------- LARGE TICKER (25 STOCKS) --------------------
+nifty_stocks = [
     "RELIANCE.NS","TCS.NS","INFY.NS","HDFCBANK.NS","ICICIBANK.NS",
     "KOTAKBANK.NS","LT.NS","ITC.NS","SBIN.NS","BHARTIARTL.NS",
     "ASIANPAINT.NS","AXISBANK.NS","BAJFINANCE.NS","MARUTI.NS","SUNPHARMA.NS",
@@ -29,22 +29,49 @@ stocks = [
 
 ticker_text = ""
 
-for s in stocks:
+for s in nifty_stocks:
     try:
         data = yf.Ticker(s).history(period="1d")
         price = data["Close"].iloc[-1]
-        ticker_text += f"{s.replace('.NS','')} ₹{price:.0f} | "
+        ticker_text += f"{s.replace('.NS','')} ₹{price:.0f} ▲ | "
     except:
         ticker_text += f"{s.replace('.NS','')} N/A | "
 
-st.markdown(f"""
-<div style="background:black; color:#00ffcc; padding:10px; overflow:hidden; white-space:nowrap;">
-<marquee>{ticker_text}</marquee>
+ticker_html = f"""
+<style>
+.ticker {{
+    width: 100%;
+    overflow: hidden;
+    white-space: nowrap;
+    background: black;
+    color: #00ffcc;
+    padding: 12px;
+    font-size: 16px;
+    font-weight: bold;
+}}
+
+.ticker span {{
+    display: inline-block;
+    padding-left: 100%;
+    animation: ticker 40s linear infinite;
+}}
+
+@keyframes ticker {{
+    0% {{ transform: translateX(0); }}
+    100% {{ transform: translateX(-100%); }}
+}}
+</style>
+
+<div class="ticker">
+<span>{ticker_text}</span>
 </div>
-""", unsafe_allow_html=True)
+"""
+st.markdown(ticker_html, unsafe_allow_html=True)
 
 # -------------------- TITLE --------------------
-st.title("📊 Stock Intelligence Dashboard")
+st.markdown("<h1 class='glow' style='text-align:center;'>📊 Stock Intelligence Dashboard</h1>", unsafe_allow_html=True)
+
+st.markdown("---")
 
 # -------------------- INPUT --------------------
 stock_name = st.text_input("🔍 Enter Stock (e.g., TCS.NS)")
