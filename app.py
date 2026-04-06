@@ -1,5 +1,6 @@
-import streamlit as st
+import streamlit as st
 import yfinance as yf
+import random
 
 # -------------------- PAGE CONFIG --------------------
 st.set_page_config(page_title="Stock Terminal", layout="wide")
