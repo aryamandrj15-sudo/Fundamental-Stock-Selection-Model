@@ -1,8 +1,8 @@
+import plotly.express as px
+import pandas as pd
 import streamlit as st
 import yfinance as yf
 import random
-import plotly.express as px
-import pandas as pd
 
 # -------------------- PAGE CONFIG --------------------
 st.set_page_config(page_title="Stock Terminal", layout="wide")
@@ -266,6 +266,17 @@ index_choice = st.selectbox(
     placeholder="Select an index"
 )
 
+# -------------------- STOCK LISTS --------------------
+nifty_50 = [
+    "RELIANCE.NS","TCS.NS","INFY.NS","HDFCBANK.NS","ICICIBANK.NS",
+    "KOTAKBANK.NS","LT.NS","ITC.NS","SBIN.NS","BHARTIARTL.NS"
+]
+
+bank_nifty = [
+    "HDFCBANK.NS","ICICIBANK.NS","KOTAKBANK.NS","SBIN.NS","AXISBANK.NS",
+    "INDUSINDBK.NS","BANKBARODA.NS","PNB.NS","FEDERALBNK.NS","IDFCFIRSTB.NS"
+]
+
 # -------------------- HEATMAP --------------------
 st.markdown("## 🔥 Market Heatmap")
 
@@ -306,17 +317,6 @@ if not df.empty:
     )
 
     st.plotly_chart(fig, use_container_width=True)
-
-# -------------------- STOCK LISTS --------------------
-nifty_50 = [
-    "RELIANCE.NS","TCS.NS","INFY.NS","HDFCBANK.NS","ICICIBANK.NS",
-    "KOTAKBANK.NS","LT.NS","ITC.NS","SBIN.NS","BHARTIARTL.NS"
-]
-
-bank_nifty = [
-    "HDFCBANK.NS","ICICIBANK.NS","KOTAKBANK.NS","SBIN.NS","AXISBANK.NS",
-    "INDUSINDBK.NS","BANKBARODA.NS","PNB.NS","FEDERALBNK.NS","IDFCFIRSTB.NS"
-]
 
 # -------------------- SHOW ONLY AFTER SELECTION --------------------
 if index_choice:
