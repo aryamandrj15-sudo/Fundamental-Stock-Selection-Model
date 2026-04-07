@@ -265,6 +265,7 @@ index_choice = st.selectbox(
     index=None,
     placeholder="Select an index"
 )
+
 # -------------------- STOCK DISPLAY --------------------
 if index_choice:
 
@@ -294,51 +295,49 @@ if index_choice:
             pass
 
 
-   # -------------------- HEATMAP --------------------
-st.markdown("## 🔥 Market Heatmap")
+    # 🔥 HEATMAP 
+    st.markdown("## 🔥 Market Heatmap")
 
-heatmap_data = []
+    heatmap_data = []
 
-for stock in stocks:
-    try:
-        data = yf.Ticker(stock).history(period="2d")
+    for stock in stocks:
+        try:
+            data = yf.Ticker(stock).history(period="2d")
 
-        if len(data) < 2:
-            continue
+            if len(data) < 2:
+                continue
 
-        price = data["Close"].iloc[-1]
-        prev = data["Close"].iloc[-2]
-        change = ((price - prev) / prev) * 100
+            price = data["Close"].iloc[-1]
+            prev = data["Close"].iloc[-2]
+            change = ((price - prev) / prev) * 100
 
-        heatmap_data.append({
-            "Stock": stock.replace(".NS",""),
-            "Change": change
-        })
+            heatmap_data.append({
+                "Stock": stock.replace(".NS",""),
+                "Change": change
+            })
 
-    except Exception as e:
-        st.write("Error:", e)
+        except:
+            pass
 
-import pandas as pd
+    df = pd.DataFrame(heatmap_data)
 
-df = pd.DataFrame(heatmap_data)
+    if not df.empty:
+        fig = px.treemap(
+            df,
+            path=["Stock"],
+            values="Change",
+            color="Change",
+            color_continuous_scale=["red", "black", "green"]
+        )
 
-if not df.empty:
-    fig = px.treemap(
-        df,
-        path=["Stock"],
-        values="Change",
-        color="Change",
-        color_continuous_scale=["red", "black", "green"]
-    )
+        fig.update_layout(
+            paper_bgcolor="rgba(0,0,0,0)",
+            font_color="white"
+        )
 
-    fig.update_layout(
-        paper_bgcolor="rgba(0,0,0,0)",
-        font_color="white"
-    )
+        st.plotly_chart(fig, use_container_width=True)
 
-    st.plotly_chart(fig, use_container_width=True)
-else:
-    st.warning("No data for heatmap")
+
 # -------------------- STOCK LISTS --------------------
 nifty_50 = [
     "RELIANCE.NS","TCS.NS","INFY.NS","HDFCBANK.NS","ICICIBANK.NS",
