@@ -317,6 +317,10 @@ if index_choice:
         except:
             pass
 
+
+# -------------------- RUN ONLY AFTER INDEX SELECTED --------------------
+if index_choice:
+
     # -------------------- HEATMAP --------------------
     st.markdown("## 🔥 Market Heatmap")
 
@@ -367,10 +371,7 @@ if index_choice:
     else:
         st.warning("No data for heatmap")
 
-
-# -------------------- SCREENERS --------------------
-if index_choice:
-
+    # -------------------- SCREENERS --------------------
     st.markdown("## 📊 Stock Screeners")
 
     screener_type = st.selectbox(
