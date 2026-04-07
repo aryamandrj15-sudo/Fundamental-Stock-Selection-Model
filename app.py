@@ -5,6 +5,58 @@ import random
 # -------------------- PAGE CONFIG --------------------
 st.set_page_config(page_title="Stock Terminal", layout="wide")
 
+# -------------------- TICKER --------------------
+nifty_stocks = [
+    "RELIANCE.NS","TCS.NS","INFY.NS","HDFCBANK.NS","ICICIBANK.NS",
+    "KOTAKBANK.NS","LT.NS","ITC.NS","SBIN.NS","BHARTIARTL.NS",
+    "ASIANPAINT.NS","AXISBANK.NS","BAJFINANCE.NS","MARUTI.NS","SUNPHARMA.NS",
+    "ULTRACEMCO.NS","TITAN.NS","WIPRO.NS","NESTLEIND.NS","POWERGRID.NS",
+    "NTPC.NS","HCLTECH.NS","ONGC.NS","ADANIENT.NS","ADANIPORTS.NS"
+]
+
+ticker_text = ""
+
+for s in nifty_stocks:
+    try:
+        data = yf.Ticker(s).history(period="1d")
+        price = data["Close"].iloc[-1]
+        ticker_text += f"{s.replace('.NS','')} ₹{price:.0f} ▲ | "
+    except:
+        ticker_text += f"{s.replace('.NS','')} N/A | "
+
+
+ticker_html = f"""
+<style>
+.ticker {{
+    width: 100%;
+    overflow: hidden;
+    white-space: nowrap;
+    background: black;
+    color: #00ffcc;
+    padding: 12px;
+    font-size: 16px;
+    font-weight: bold;
+}}
+
+.ticker span {{
+    display: inline-block;
+    padding-left: 100%;
+    animation: ticker 40s linear infinite;
+}}
+
+@keyframes ticker {{
+    0% {{ transform: translateX(0); }}
+    100% {{ transform: translateX(-100%); }}
+}}
+</style>
+
+<div class="ticker">
+<span>{ticker_text}</span>
+</div>
+"""
+st.markdown(ticker_html, unsafe_allow_html=True)
+
+
 # -------------------- BACKGROUND --------------------
 BACKGROUND = """
 <style>
@@ -249,57 +301,6 @@ for i, stock in enumerate(stocks):
         pass
 
 
-# -------------------- TICKER --------------------
-nifty_stocks = [
-    "RELIANCE.NS","TCS.NS","INFY.NS","HDFCBANK.NS","ICICIBANK.NS",
-    "KOTAKBANK.NS","LT.NS","ITC.NS","SBIN.NS","BHARTIARTL.NS",
-    "ASIANPAINT.NS","AXISBANK.NS","BAJFINANCE.NS","MARUTI.NS","SUNPHARMA.NS",
-    "ULTRACEMCO.NS","TITAN.NS","WIPRO.NS","NESTLEIND.NS","POWERGRID.NS",
-    "NTPC.NS","HCLTECH.NS","ONGC.NS","ADANIENT.NS","ADANIPORTS.NS"
-]
-
-ticker_text = ""
-
-for s in nifty_stocks:
-    try:
-        data = yf.Ticker(s).history(period="1d")
-        price = data["Close"].iloc[-1]
-        ticker_text += f"{s.replace('.NS','')} ₹{price:.0f} ▲ | "
-    except:
-        ticker_text += f"{s.replace('.NS','')} N/A | "
-
-
-ticker_html = f"""
-<style>
-.ticker {{
-    width: 100%;
-    overflow: hidden;
-    white-space: nowrap;
-    background: black;
-    color: #00ffcc;
-    padding: 12px;
-    font-size: 16px;
-    font-weight: bold;
-}}
-
-.ticker span {{
-    display: inline-block;
-    padding-left: 100%;
-    animation: ticker 40s linear infinite;
-}}
-
-@keyframes ticker {{
-    0% {{ transform: translateX(0); }}
-    100% {{ transform: translateX(-100%); }}
-}}
-</style>
-
-<div class="ticker">
-<span>{ticker_text}</span>
-</div>
-"""
-st.markdown(ticker_html, unsafe_allow_html=True)
-
 # -------------------- INPUT --------------------
 option = st.radio("Select input method:", ["Type", "Choose"])
 
@@ -365,17 +366,6 @@ Sector P/E: {sector_pe}
         except:
             st.error("Error fetching data")
 
-# -------------------- QUOTES --------------------
-quotes = [
-    "Be fearful when others are greedy. — Warren Buffett",
-    "Time in the market beats timing the market.",
-    "Price is what you pay, value is what you get.",
-    "Know what you own.",
-]
-
-st.markdown("---")
-st.markdown(f"<center style='color:#00ffcc;'>💡 {random.choice(quotes)}</center>", unsafe_allow_html=True)
-
 
 #----------------TOP GAINERS & LOSERS-------------
 
@@ -418,3 +408,15 @@ with col2:
     st.subheader("🔴 Top Losers")
     for stock, change in losers:
         st.write(f"{stock} {change:.2f}%")
+
+
+# -------------------- QUOTES --------------------
+quotes = [
+    "Be fearful when others are greedy. — Warren Buffett",
+    "Time in the market beats timing the market.",
+    "Price is what you pay, value is what you get.",
+    "Know what you own.",
+]
+
+st.markdown("---")
+st.markdown(f"<center style='color:#00ffcc;'>💡 {random.choice(quotes)}</center>", unsafe_allow_html=True)
