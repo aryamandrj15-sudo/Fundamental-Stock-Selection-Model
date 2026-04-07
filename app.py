@@ -9,12 +9,12 @@ st.set_page_config(page_title="Stock Terminal", layout="wide")
 BACKGROUND = """
 <style>
 
-/* MAIN DARK GRADIENT */
+/* MAIN BACKGROUND */
 [data-testid="stAppViewContainer"] {
     background: linear-gradient(to bottom, #000000, #0b1c26, #000000);
 }
 
-/* SUBTLE CHART GRID */
+/* GRID */
 [data-testid="stAppViewContainer"]::before {
     content: "";
     position: fixed;
@@ -24,10 +24,11 @@ BACKGROUND = """
         linear-gradient(rgba(0,255,204,0.04) 1px, transparent 1px),
         linear-gradient(90deg, rgba(0,255,204,0.04) 1px, transparent 1px);
     background-size: 60px 60px;
+    pointer-events: none;   /* 🔥 THIS FIXES CLICK ISSUE */
     z-index: 0;
 }
 
-/* GLOW LINES (LIKE PRICE MOVEMENT) */
+/* GLOW EFFECT */
 [data-testid="stAppViewContainer"]::after {
     content: "";
     position: fixed;
@@ -35,13 +36,14 @@ BACKGROUND = """
     height: 100%;
     background: radial-gradient(circle at 20% 30%, rgba(0,255,204,0.08), transparent 40%),
                 radial-gradient(circle at 80% 70%, rgba(0,255,204,0.06), transparent 40%);
-    animation: floatGlow 12s ease-in-out infinite alternate;
+    pointer-events: none;   /* 🔥 IMPORTANT */
+    z-index: 0;
 }
 
-/* ANIMATION */
-@keyframes floatGlow {
-    0% { transform: translateY(0px); }
-    100% { transform: translateY(-40px); }
+/* MAKE APP ABOVE BACKGROUND */
+.stApp > div {
+    position: relative;
+    z-index: 1;
 }
 
 /* TEXT */
@@ -49,7 +51,6 @@ h1, h2, h3, p, label {
     color: white !important;
 }
 
-/* TITLE GLOW */
 .glow {
     text-shadow: 0 0 20px #00ffcc;
 }
@@ -67,24 +68,9 @@ h1, h2, h3, p, label {
     box-shadow: 0 0 25px #00ffcc;
 }
 
-/* INPUT */
-input {
-    background-color: rgba(255,255,255,0.05) !important;
-    color: white !important;
-}
-
-/* BUTTON */
-button[kind="primary"] {
-    background: linear-gradient(45deg, #00ffcc, #007cf0);
-    border: none;
-    color: black;
-    font-weight: bold;
-}
-
 </style>
 """
 st.markdown(BACKGROUND, unsafe_allow_html=True)
-
 # -------------------- AI HELPER --------------------
 if "show_ai" not in st.session_state:
     st.session_state.show_ai = False
