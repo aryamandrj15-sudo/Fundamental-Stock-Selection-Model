@@ -259,7 +259,9 @@ st.markdown("### 📊 Market Indices")
 
 index_choice = st.selectbox(
     "Select Index",
-    ["-- Select Index --", "NIFTY 50", "BANK NIFTY"]
+    ["NIFTY 50", "BANK NIFTY"],
+    index=None,
+    placeholder="Select an index"
 )
 
 # -------------------- STOCK LISTS --------------------
@@ -274,7 +276,7 @@ bank_nifty = [
 ]
 
 # -------------------- SHOW ONLY AFTER SELECTION --------------------
-if index_choice != "-- Select Index --":
+if index_choice:
 
     if index_choice == "NIFTY 50":
         stocks = nifty_50
@@ -301,43 +303,7 @@ if index_choice != "-- Select Index --":
         except:
             pass
 
-# -------------------- STOCK LISTS --------------------
 
-nifty_50 = [
-    "RELIANCE.NS","TCS.NS","INFY.NS","HDFCBANK.NS","ICICIBANK.NS",
-    "KOTAKBANK.NS","LT.NS","ITC.NS","SBIN.NS","BHARTIARTL.NS",
-    "ASIANPAINT.NS","AXISBANK.NS","BAJFINANCE.NS","MARUTI.NS","SUNPHARMA.NS"
-]
-
-bank_nifty = [
-    "HDFCBANK.NS","ICICIBANK.NS","KOTAKBANK.NS","SBIN.NS","AXISBANK.NS",
-    "INDUSINDBK.NS","BANKBARODA.NS","PNB.NS","FEDERALBNK.NS","IDFCFIRSTB.NS"
-]
-
-
-# -------------------- DISPLAY --------------------
-
-if index_choice == "NIFTY 50":
-    stocks = nifty_50
-else:
-    stocks = bank_nifty
-
-st.markdown(f"### 📈 {index_choice} Stocks")
-
-col1, col2 = st.columns(2)
-
-for i, stock in enumerate(stocks):
-    try:
-        data = yf.Ticker(stock).history(period="1d")
-        price = data["Close"].iloc[-1]
-
-        if i % 2 == 0:
-            col1.metric(stock.replace(".NS",""), f"₹{price:.2f}")
-        else:
-            col2.metric(stock.replace(".NS",""), f"₹{price:.2f}")
-
-    except:
-        pass
 
 
 # -------------------- INPUT --------------------
