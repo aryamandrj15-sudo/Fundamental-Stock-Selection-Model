@@ -125,6 +125,8 @@ h1, h2, h3, p, label {
 </style>
 """
 st.markdown(BACKGROUND, unsafe_allow_html=True)
+
+
 # -------------------- AI HELPER --------------------
 if "show_ai" not in st.session_state:
     st.session_state.show_ai = False
@@ -293,29 +295,6 @@ if index_choice:
     else:
         stocks = bank_nifty
 
-    # -------------------- STOCK DISPLAY --------------------
-    st.markdown(f"### 📈 {index_choice} Stocks")
-
-    col1, col2 = st.columns(2)
-
-    for i, stock in enumerate(stocks):
-        try:
-            data = yf.Ticker(stock).history(period="2d")
-
-            if len(data) < 2:
-                continue
-
-            price = data["Close"].iloc[-1]
-            prev = data["Close"].iloc[-2]
-            change = price - prev
-
-            if i % 2 == 0:
-                col1.metric(stock.replace(".NS",""), f"₹{price:.2f}", f"{change:.2f}")
-            else:
-                col2.metric(stock.replace(".NS",""), f"₹{price:.2f}", f"{change:.2f}")
-
-        except:
-            pass
 
  # -------------------- SCREENERS --------------------
 if index_choice:
