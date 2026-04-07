@@ -317,61 +317,9 @@ if index_choice:
         except:
             pass
 
-
-# -------------------- RUN ONLY AFTER INDEX SELECTED --------------------
+ # -------------------- SCREENERS --------------------
 if index_choice:
 
-    # -------------------- HEATMAP --------------------
-    st.markdown("## 🔥 Market Heatmap")
-
-    heatmap_data = []
-
-    for stock in stocks:
-        try:
-            data = yf.Ticker(stock).history(period="2d")
-
-            if len(data) < 2:
-                continue
-
-            price = data["Close"].iloc[-1]
-            prev = data["Close"].iloc[-2]
-            change = ((price - prev) / prev) * 100
-
-            heatmap_data.append({
-                "Stock": stock.replace(".NS",""),
-                "Change": change,
-                "Size": abs(change) + 1
-            })
-
-        except:
-            pass
-
-    df = pd.DataFrame(heatmap_data)
-
-    if not df.empty:
-        fig = px.treemap(
-            df,
-            path=["Stock"],
-            values="Size",
-            color="Change",
-            color_continuous_scale="RdYlGn",
-            range_color=[-3, 3]
-        )
-
-        fig.data[0].text = df["Change"].apply(lambda x: f"{x:.2f}%")
-        fig.data[0].textinfo = "label+text"
-
-        fig.update_layout(
-            paper_bgcolor="rgba(0,0,0,0)",
-            font_color="white"
-        )
-
-        st.plotly_chart(fig, use_container_width=True)
-
-    else:
-        st.warning("No data for heatmap")
-
-    # -------------------- SCREENERS --------------------
     st.markdown("## 📊 Stock Screeners")
 
     screener_type = st.selectbox(
@@ -433,6 +381,63 @@ if index_choice:
 
     else:
         st.error("No stocks match this screener")
+
+
+
+# -------------------- RUN ONLY AFTER INDEX SELECTED --------------------
+if index_choice:
+
+    # -------------------- HEATMAP --------------------
+    st.markdown("## 🔥 Market Heatmap")
+
+    heatmap_data = []
+
+    for stock in stocks:
+        try:
+            data = yf.Ticker(stock).history(period="2d")
+
+            if len(data) < 2:
+                continue
+
+            price = data["Close"].iloc[-1]
+            prev = data["Close"].iloc[-2]
+            change = ((price - prev) / prev) * 100
+
+            heatmap_data.append({
+                "Stock": stock.replace(".NS",""),
+                "Change": change,
+                "Size": abs(change) + 1
+            })
+
+        except:
+            pass
+
+    df = pd.DataFrame(heatmap_data)
+
+    if not df.empty:
+        fig = px.treemap(
+            df,
+            path=["Stock"],
+            values="Size",
+            color="Change",
+            color_continuous_scale="RdYlGn",
+            range_color=[-3, 3]
+        )
+
+        fig.data[0].text = df["Change"].apply(lambda x: f"{x:.2f}%")
+        fig.data[0].textinfo = "label+text"
+
+        fig.update_layout(
+            paper_bgcolor="rgba(0,0,0,0)",
+            font_color="white"
+        )
+
+        st.plotly_chart(fig, use_container_width=True)
+
+    else:
+        st.warning("No data for heatmap")
+
+   
     
 # -------------------- SHOW ONLY AFTER SELECTION --------------------
 if index_choice:
