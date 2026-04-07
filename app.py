@@ -202,28 +202,48 @@ Currently I can help with:
 More features coming soon 🚀
 """)
             
-# -------------------- NIFTY 50 TAB --------------------
-tab = st.tabs(["📊 NIFTY 50"])[0]
+# -------------------- INDEX DROPDOWN --------------------
+st.markdown("### 📊 Market Indices")
 
-with tab:
-    st.subheader("📊 NIFTY 50 Stocks")
+index_choice = st.selectbox(
+    "Select Index",
+    ["NIFTY 50", "BANK NIFTY"]
+)
 
-    nifty_stocks = [
-        "RELIANCE.NS","TCS.NS","INFY.NS","HDFCBANK.NS","ICICIBANK.NS",
-        "KOTAKBANK.NS","LT.NS","ITC.NS","SBIN.NS","BHARTIARTL.NS"
-    ]
+# -------------------- STOCK LISTS --------------------
 
-    for stock in nifty_stocks:
-        try:
-            data = yf.Ticker(stock).history(period="1d")
-            price = data["Close"].iloc[-1]
-            st.write(f"{stock.replace('.NS','')} ₹{price:.2f}")
-        except:
-            st.write(f"{stock} data not available")
+nifty_50 = [
+    "RELIANCE.NS","TCS.NS","INFY.NS","HDFCBANK.NS","ICICIBANK.NS",
+    "KOTAKBANK.NS","LT.NS","ITC.NS","SBIN.NS","BHARTIARTL.NS",
+    "ASIANPAINT.NS","AXISBANK.NS","BAJFINANCE.NS","MARUTI.NS","SUNPHARMA.NS"
+]
+
+bank_nifty = [
+    "HDFCBANK.NS","ICICIBANK.NS","KOTAKBANK.NS","SBIN.NS","AXISBANK.NS",
+    "INDUSINDBK.NS","BANKBARODA.NS","PNB.NS","FEDERALBNK.NS","IDFCFIRSTB.NS"
+]
+
+change = data["Close"].iloc[-1] - data["Close"].iloc[-2]
+
+if change > 0:
+    color = "🟢"
+else:
+    color = "🔴"
+
+col1.metric(stock.replace(".NS",""), f"₹{price:.2f}", f"{color} {change:.2f}")
+
+# -------------------- DISPLAY --------------------
+
+if index_choice == "NIFTY 50":
+    stocks = nifty_50
+else:
+    stocks = bank_nifty
+
+st.markdown(f"### 📈 {index_choice} Stocks")
 
 col1, col2 = st.columns(2)
 
-for i, stock in enumerate(nifty_stocks):
+for i, stock in enumerate(stocks):
     try:
         data = yf.Ticker(stock).history(period="1d")
         price = data["Close"].iloc[-1]
