@@ -310,7 +310,7 @@ if index_choice:
 option = st.radio("Select input method:", ["Type", "Choose"])
 
 if option == "Type":
-    stock_name = st.text_input("Enter Stock (e.g., TCS.NS)")
+    stock_name = st.text_input("Enter Stock for fundamental analysis... (e.g., TCS.NS,RELIANCE.NS)")
 else:
     stock_name = st.selectbox("Choose Stock", nifty_stocks)
 
