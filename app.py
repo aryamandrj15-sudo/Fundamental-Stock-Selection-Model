@@ -310,7 +310,8 @@ if index_choice:
         except Exception as e:
             st.write("Stock Error:", e)
 
-  # -------------------- HEATMAP --------------------
+
+# -------------------- HEATMAP  --------------------
 st.markdown("## 🔥 Market Heatmap")
 
 heatmap_data = []
@@ -324,12 +325,13 @@ for stock in stocks:
 
         price = data["Close"].iloc[-1]
         prev = data["Close"].iloc[-2]
+
         change = ((price - prev) / prev) * 100
 
         heatmap_data.append({
             "Stock": stock.replace(".NS",""),
             "Change": change,
-            "Size": abs(change) + 1   # 🔥 IMPORTANT
+            "Size": abs(change) + 1
         })
 
     except:
@@ -338,26 +340,20 @@ for stock in stocks:
 df = pd.DataFrame(heatmap_data)
 
 if not df.empty:
+
     fig = px.treemap(
         df,
         path=["Stock"],
-        values="Size",   # 🔥 size based on movement
+        values="Size",
         color="Change",
-        color_continuous_scale=[
-            "#ff4d4d",   # red
-            "#1a1a1a",   # neutral
-            "#00ff88"    # green
-        ],
-        hover_data=["Change"]
+        color_continuous_scale="RdYlGn",   # 🔥 THIS FIXES COLORS
+        range_color=[-3, 3]   # 🔥 FORCE COLOR RANGE
     )
 
-    # 🔥 SHOW TEXT INSIDE BOXES
-    fig.update_traces(
-        textinfo="label+text",
-        text=df["Change"].apply(lambda x: f"{x:.2f}%")
-    )
+    # 🔥 SHOW % INSIDE BOXES (CORRECT WAY)
+    fig.data[0].text = df["Change"].apply(lambda x: f"{x:.2f}%")
+    fig.data[0].textinfo = "label+text"
 
-    # 🔥 REMOVE UGLY MARGINS
     fig.update_layout(
         margin=dict(t=20, l=0, r=0, b=0),
         paper_bgcolor="rgba(0,0,0,0)",
@@ -365,7 +361,9 @@ if not df.empty:
     )
 
     st.plotly_chart(fig, use_container_width=True)
-   
+
+else:
+    st.warning("No data for heatmap")
     
 # -------------------- SHOW ONLY AFTER SELECTION --------------------
 if index_choice:
