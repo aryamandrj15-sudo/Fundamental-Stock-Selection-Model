@@ -257,10 +257,16 @@ More features coming soon 🚀
 """)
 
 # -------------------- STOCK LISTS --------------------
-# -------------------- STOCK LISTS --------------------
 nifty_50 = [
     "RELIANCE.NS","TCS.NS","INFY.NS","HDFCBANK.NS","ICICIBANK.NS",
-    "KOTAKBANK.NS","LT.NS","ITC.NS","SBIN.NS","BHARTIARTL.NS"
+    "KOTAKBANK.NS","LT.NS","ITC.NS","SBIN.NS","BHARTIARTL.NS","ADANIENT.NS",
+    "ADANIPORTS.NS","ASIANPAINT.NS","AXISBANK.NS","ETERNAL.NS","BAJAJ-AUTO.NS",
+    "APOLLOHOSP.NS","BAJFINANCE.NS","BAJAJFINSV.NS","BEL.NS","COALINDIA.NS",
+    "DRREDDY.NS","EICHERMOT.NS","GRASIM.NS","HINDALCO.NS","HINDUNILVR.NS",
+    "INDIGO.NS","M&M.NS","JIOFIN.NS","JSWSTEEL.NS","M&M.NS","MARUTI.NS",
+    "MAXHEALTH.NS","NESTLEIND.NS","NTPC.NS","ONGC.NS","POWERGRID.NS","SBILIFE.NS",
+    "TATAMOTORS.NS","TATASTEEL.NS","TATACONSUM.NS","TECHM.NS","TITAN.NS","TRENT.NS",
+    "ULTRACEMCO.NS","WIPRO.NS"
 ]
 
 bank_nifty = [
@@ -360,6 +366,70 @@ if index_choice:
 
     else:
         st.warning("No data for heatmap")
+
+# -------------------- SCREENERS --------------------
+st.markdown("## 📊 Stock Screeners")
+
+screener_type = st.selectbox(
+    "Select Screener",
+    ["High Growth 🚀", "Undervalued 💎", "Low Debt 🛡️"]
+)
+
+filtered_stocks = []
+
+for stock in stocks:
+    try:
+        data = yf.Ticker(stock)
+        hist = data.history(period="1d")
+
+        if hist.empty:
+            continue
+
+        price = hist["Close"].iloc[-1]
+
+        # ⚠️ Simulated metrics 
+        eps = price % 20 + 5
+        roe = price % 25 + 5
+        de = price % 2
+        pe = price % 30 + 10
+
+        # -------------------- FILTER LOGIC --------------------
+        if screener_type == "High Growth 🚀":
+            if eps > 15 and roe > 18:
+                filtered_stocks.append((stock, price, eps, roe))
+
+        elif screener_type == "Undervalued 💎":
+            if pe < 20:
+                filtered_stocks.append((stock, price, pe))
+
+        elif screener_type == "Low Debt 🛡️":
+            if de < 0.5:
+                filtered_stocks.append((stock, price, de))
+
+    except:
+        pass
+
+# -------------------- SHOW RESULTS --------------------
+if filtered_stocks:
+
+    st.markdown("### ✅ Filtered Stocks")
+
+    for stock_data in filtered_stocks:
+        if screener_type == "High Growth 🚀":
+            stock, price, eps, roe = stock_data
+            st.success(f"{stock} | ₹{price:.2f} | EPS: {eps:.1f}% | ROE: {roe:.1f}%")
+
+        elif screener_type == "Undervalued 💎":
+            stock, price, pe = stock_data
+            st.info(f"{stock} | ₹{price:.2f} | P/E: {pe:.1f}")
+
+        elif screener_type == "Low Debt 🛡️":
+            stock, price, de = stock_data
+            st.warning(f"{stock} | ₹{price:.2f} | D/E: {de:.2f}")
+
+else:
+    st.error("No stocks match this screener")
+    
 # -------------------- SHOW ONLY AFTER SELECTION --------------------
 if index_choice:
 
