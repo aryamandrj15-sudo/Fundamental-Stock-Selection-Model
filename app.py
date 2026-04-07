@@ -1,6 +1,8 @@
 import streamlit as st
 import yfinance as yf
 import random
+import plotly.express as px
+import pandas as pd
 
 # -------------------- PAGE CONFIG --------------------
 st.set_page_config(page_title="Stock Terminal", layout="wide")
@@ -263,6 +265,47 @@ index_choice = st.selectbox(
     index=None,
     placeholder="Select an index"
 )
+
+# -------------------- HEATMAP --------------------
+st.markdown("## 🔥 Market Heatmap")
+
+heatmap_data = []
+
+for stock in stocks:
+    try:
+        data = yf.Ticker(stock).history(period="2d")
+
+        price = data["Close"].iloc[-1]
+        prev = data["Close"].iloc[-2]
+        change = ((price - prev) / prev) * 100
+
+        heatmap_data.append({
+            "Stock": stock.replace(".NS",""),
+            "Change": change
+        })
+
+    except:
+        pass
+
+# Convert to DataFrame
+df = pd.DataFrame(heatmap_data)
+
+if not df.empty:
+    fig = px.treemap(
+        df,
+        path=["Stock"],
+        values="Change",
+        color="Change",
+        color_continuous_scale=["red", "black", "green"]
+    )
+
+    fig.update_layout(
+        margin=dict(t=30, l=0, r=0, b=0),
+        paper_bgcolor="rgba(0,0,0,0)",
+        font_color="white"
+    )
+
+    st.plotly_chart(fig, use_container_width=True)
 
 # -------------------- STOCK LISTS --------------------
 nifty_50 = [
