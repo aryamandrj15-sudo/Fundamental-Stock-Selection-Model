@@ -277,10 +277,10 @@ index_choice = st.selectbox(
     placeholder="Select an index"
 )
 
-# -------------------- MAIN BLOCK --------------------
+# -------------------- ONLY RUN AFTER SELECTION --------------------
 if index_choice:
 
-    # Select stocks
+    # ✅ DEFINE STOCKS FIRST
     if index_choice == "NIFTY 50":
         stocks = nifty_50
     else:
@@ -307,64 +307,58 @@ if index_choice:
             else:
                 col2.metric(stock.replace(".NS",""), f"₹{price:.2f}", f"{change:.2f}")
 
-        except Exception as e:
-            st.write("Stock Error:", e)
+        except:
+            pass
 
+    # -------------------- HEATMAP --------------------
+    st.markdown("## 🔥 Market Heatmap")
 
-# -------------------- HEATMAP  --------------------
-st.markdown("## 🔥 Market Heatmap")
+    heatmap_data = []
 
-heatmap_data = []
+    for stock in stocks:
+        try:
+            data = yf.Ticker(stock).history(period="2d")
 
-for stock in stocks:
-    try:
-        data = yf.Ticker(stock).history(period="2d")
+            if len(data) < 2:
+                continue
 
-        if len(data) < 2:
-            continue
+            price = data["Close"].iloc[-1]
+            prev = data["Close"].iloc[-2]
+            change = ((price - prev) / prev) * 100
 
-        price = data["Close"].iloc[-1]
-        prev = data["Close"].iloc[-2]
+            heatmap_data.append({
+                "Stock": stock.replace(".NS",""),
+                "Change": change,
+                "Size": abs(change) + 1
+            })
 
-        change = ((price - prev) / prev) * 100
+        except:
+            pass
 
-        heatmap_data.append({
-            "Stock": stock.replace(".NS",""),
-            "Change": change,
-            "Size": abs(change) + 1
-        })
+    df = pd.DataFrame(heatmap_data)
 
-    except:
-        pass
+    if not df.empty:
+        fig = px.treemap(
+            df,
+            path=["Stock"],
+            values="Size",
+            color="Change",
+            color_continuous_scale="RdYlGn",
+            range_color=[-3, 3]
+        )
 
-df = pd.DataFrame(heatmap_data)
+        fig.data[0].text = df["Change"].apply(lambda x: f"{x:.2f}%")
+        fig.data[0].textinfo = "label+text"
 
-if not df.empty:
+        fig.update_layout(
+            paper_bgcolor="rgba(0,0,0,0)",
+            font_color="white"
+        )
 
-    fig = px.treemap(
-        df,
-        path=["Stock"],
-        values="Size",
-        color="Change",
-        color_continuous_scale="RdYlGn",   # 🔥 THIS FIXES COLORS
-        range_color=[-3, 3]   # 🔥 FORCE COLOR RANGE
-    )
+        st.plotly_chart(fig, use_container_width=True)
 
-    # 🔥 SHOW % INSIDE BOXES (CORRECT WAY)
-    fig.data[0].text = df["Change"].apply(lambda x: f"{x:.2f}%")
-    fig.data[0].textinfo = "label+text"
-
-    fig.update_layout(
-        margin=dict(t=20, l=0, r=0, b=0),
-        paper_bgcolor="rgba(0,0,0,0)",
-        font_color="white"
-    )
-
-    st.plotly_chart(fig, use_container_width=True)
-
-else:
-    st.warning("No data for heatmap")
-    
+    else:
+        st.warning("No data for heatmap")
 # -------------------- SHOW ONLY AFTER SELECTION --------------------
 if index_choice:
 
