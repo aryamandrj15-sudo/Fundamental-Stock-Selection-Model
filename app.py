@@ -311,47 +311,61 @@ if index_choice:
             st.write("Stock Error:", e)
 
     # -------------------- HEATMAP --------------------
-    st.markdown("## 🔥 Market Heatmap")
+  # -------------------- HEATMAP --------------------
+st.markdown("## 🔥 Market Heatmap")
 
-    import pandas as pd
-    import plotly.express as px
+heatmap_data = []
 
-    heatmap_data = []
+for stock in stocks:
+    try:
+        data = yf.Ticker(stock).history(period="2d")
 
-    for stock in stocks:
-        try:
-            data = yf.Ticker(stock).history(period="2d")
+        if len(data) < 2:
+            continue
 
-            if len(data) < 2:
-                continue
+        price = data["Close"].iloc[-1]
+        prev = data["Close"].iloc[-2]
+        change = ((price - prev) / prev) * 100
 
-            price = data["Close"].iloc[-1]
-            prev = data["Close"].iloc[-2]
-            change = ((price - prev) / prev) * 100
+        heatmap_data.append({
+            "Stock": stock.replace(".NS",""),
+            "Change": change,
+            "Size": abs(change) + 1   # 🔥 IMPORTANT
+        })
 
-            heatmap_data.append({
-                "Stock": stock.replace(".NS",""),
-                "Change": change
-            })
+    except:
+        pass
 
-        except Exception as e:
-            st.write("Heatmap Error:", e)
+df = pd.DataFrame(heatmap_data)
 
-    df = pd.DataFrame(heatmap_data)
+if not df.empty:
+    fig = px.treemap(
+        df,
+        path=["Stock"],
+        values="Size",   # 🔥 size based on movement
+        color="Change",
+        color_continuous_scale=[
+            "#ff4d4d",   # red
+            "#1a1a1a",   # neutral
+            "#00ff88"    # green
+        ],
+        hover_data=["Change"]
+    )
 
-    st.write("DEBUG DATA:", df)   # 👈 MUST SHOW
+    # 🔥 SHOW TEXT INSIDE BOXES
+    fig.update_traces(
+        textinfo="label+text",
+        text=df["Change"].apply(lambda x: f"{x:.2f}%")
+    )
 
-    if not df.empty:
-        fig = px.treemap(
-            df,
-            path=["Stock"],
-            values="Change",
-            color="Change"
-        )
+    # 🔥 REMOVE UGLY MARGINS
+    fig.update_layout(
+        margin=dict(t=20, l=0, r=0, b=0),
+        paper_bgcolor="rgba(0,0,0,0)",
+        font_color="white"
+    )
 
-        st.plotly_chart(fig, use_container_width=True)
-    else:
-        st.warning("No data for heatmap")
+    st.plotly_chart(fig, use_container_width=True)
    
     
 # -------------------- SHOW ONLY AFTER SELECTION --------------------
