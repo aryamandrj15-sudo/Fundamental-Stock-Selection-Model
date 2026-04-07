@@ -221,6 +221,21 @@ with tab:
         except:
             st.write(f"{stock} data not available")
 
+col1, col2 = st.columns(2)
+
+for i, stock in enumerate(nifty_stocks):
+    try:
+        data = yf.Ticker(stock).history(period="1d")
+        price = data["Close"].iloc[-1]
+
+        if i % 2 == 0:
+            col1.metric(stock.replace(".NS",""), f"₹{price:.2f}")
+        else:
+            col2.metric(stock.replace(".NS",""), f"₹{price:.2f}")
+
+    except:
+        pass
+
 
 # -------------------- TICKER --------------------
 nifty_stocks = [
