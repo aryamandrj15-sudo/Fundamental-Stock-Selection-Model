@@ -297,72 +297,75 @@ if index_choice:
 
 
  # -------------------- SCREENERS --------------------
-if index_choice:
+st.markdown("## 📊 Stock Screeners")
 
-    st.markdown("## 📊 Stock Screeners")
+screener_type = st.selectbox(
+    "Select Screener",
+    ["High Growth 🚀", "Undervalued 💎", "Low Debt 🛡️"]
+)
 
-    screener_type = st.selectbox(
-        "Select Screener",
-        ["High Growth 🚀", "Undervalued 💎", "Low Debt 🛡️"]
-    )
+# ✅ SAFE STOCK LIST
+if index_choice == "NIFTY 50":
+    screener_stocks = nifty_50
+elif index_choice == "BANK NIFTY":
+    screener_stocks = bank_nifty
+else:
+    screener_stocks = nifty_50   # default fallback
 
-    filtered_stocks = []
+filtered_stocks = []
 
-    for stock in stocks:
-        try:
-            data = yf.Ticker(stock)
-            hist = data.history(period="1d")
+for stock in screener_stocks:
+    try:
+        data = yf.Ticker(stock)
+        hist = data.history(period="1d")
 
-            if hist.empty:
-                continue
+        if hist.empty:
+            continue
 
-            price = hist["Close"].iloc[-1]
+        price = hist["Close"].iloc[-1]
 
-            # Fake metrics
-            eps = price % 20 + 5
-            roe = price % 25 + 5
-            de = price % 2
-            pe = price % 30 + 10
+        # Fake metrics
+        eps = price % 20 + 5
+        roe = price % 25 + 5
+        de = price % 2
+        pe = price % 30 + 10
 
-            if screener_type == "High Growth 🚀":
-                if eps > 15 and roe > 18:
-                    filtered_stocks.append((stock, price, eps, roe))
+        if screener_type == "High Growth 🚀":
+            if eps > 15 and roe > 18:
+                filtered_stocks.append((stock, price, eps, roe))
 
-            elif screener_type == "Undervalued 💎":
-                if pe < 20:
-                    filtered_stocks.append((stock, price, pe))
+        elif screener_type == "Undervalued 💎":
+            if pe < 20:
+                filtered_stocks.append((stock, price, pe))
 
-            elif screener_type == "Low Debt 🛡️":
-                if de < 0.5:
-                    filtered_stocks.append((stock, price, de))
+        elif screener_type == "Low Debt 🛡️":
+            if de < 0.5:
+                filtered_stocks.append((stock, price, de))
 
-        except:
-            pass
+    except:
+        pass
 
-    # -------------------- DISPLAY --------------------
-    if filtered_stocks:
+# -------------------- DISPLAY --------------------
+if filtered_stocks:
 
-        st.markdown("### ✅ Filtered Stocks")
+    st.markdown("### ✅ Filtered Stocks")
 
-        for stock_data in filtered_stocks:
+    for stock_data in filtered_stocks:
 
-            if screener_type == "High Growth 🚀":
-                stock, price, eps, roe = stock_data
-                st.success(f"{stock} | ₹{price:.2f} | EPS: {eps:.1f}% | ROE: {roe:.1f}%")
+        if screener_type == "High Growth 🚀":
+            stock, price, eps, roe = stock_data
+            st.success(f"{stock} | ₹{price:.2f} | EPS: {eps:.1f}% | ROE: {roe:.1f}%")
 
-            elif screener_type == "Undervalued 💎":
-                stock, price, pe = stock_data
-                st.info(f"{stock} | ₹{price:.2f} | P/E: {pe:.1f}")
+        elif screener_type == "Undervalued 💎":
+            stock, price, pe = stock_data
+            st.info(f"{stock} | ₹{price:.2f} | P/E: {pe:.1f}")
 
-            elif screener_type == "Low Debt 🛡️":
-                stock, price, de = stock_data
-                st.warning(f"{stock} | ₹{price:.2f} | D/E: {de:.2f}")
+        elif screener_type == "Low Debt 🛡️":
+            stock, price, de = stock_data
+            st.warning(f"{stock} | ₹{price:.2f} | D/E: {de:.2f}")
 
-    else:
-        st.error("No stocks match this screener")
-
-
-
+else:
+    st.error("No stocks match this screener")
 # -------------------- RUN ONLY AFTER INDEX SELECTED --------------------
 if index_choice:
 
