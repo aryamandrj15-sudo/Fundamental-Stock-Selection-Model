@@ -256,7 +256,6 @@ Currently I can help with:
 More features coming soon 🚀
 """)
 
-
 # -------------------- STOCK LISTS --------------------
 nifty_50 = [
     "RELIANCE.NS","TCS.NS","INFY.NS","HDFCBANK.NS","ICICIBANK.NS",
@@ -268,7 +267,6 @@ bank_nifty = [
     "INDUSINDBK.NS","BANKBARODA.NS","PNB.NS","FEDERALBNK.NS","IDFCFIRSTB.NS"
 ]
 
-
 # -------------------- INDEX DROPDOWN --------------------
 st.markdown("### 📊 Market Indices")
 
@@ -279,10 +277,10 @@ index_choice = st.selectbox(
     placeholder="Select an index"
 )
 
-# -------------------- SHOW DATA --------------------
+# -------------------- MAIN BLOCK --------------------
 if index_choice:
 
-    # Select stock list
+    # Select stocks
     if index_choice == "NIFTY 50":
         stocks = nifty_50
     else:
@@ -310,8 +308,10 @@ if index_choice:
                 col2.metric(stock.replace(".NS",""), f"₹{price:.2f}", f"{change:.2f}")
 
         except Exception as e:
-            st.write("Error:", e)
-             st.markdown("## 🔥 Market Heatmap")
+            st.write("Stock Error:", e)
+
+    # -------------------- HEATMAP --------------------
+    st.markdown("## 🔥 Market Heatmap")
 
     import pandas as pd
     import plotly.express as px
@@ -331,15 +331,15 @@ if index_choice:
 
             heatmap_data.append({
                 "Stock": stock.replace(".NS",""),
-                 "Change": change
+                "Change": change
             })
 
         except Exception as e:
-            st.write("Error:", e)
+            st.write("Heatmap Error:", e)
 
     df = pd.DataFrame(heatmap_data)
 
-    st.write("DEBUG:", df)  
+    st.write("DEBUG DATA:", df)   # 👈 MUST SHOW
 
     if not df.empty:
         fig = px.treemap(
@@ -352,8 +352,6 @@ if index_choice:
         st.plotly_chart(fig, use_container_width=True)
     else:
         st.warning("No data for heatmap")
-
-
    
     
 # -------------------- SHOW ONLY AFTER SELECTION --------------------
