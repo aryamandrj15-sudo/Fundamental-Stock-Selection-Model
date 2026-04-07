@@ -257,6 +257,7 @@ More features coming soon 🚀
 """)
 
 # -------------------- STOCK LISTS --------------------
+# -------------------- STOCK LISTS --------------------
 nifty_50 = [
     "RELIANCE.NS","TCS.NS","INFY.NS","HDFCBANK.NS","ICICIBANK.NS",
     "KOTAKBANK.NS","LT.NS","ITC.NS","SBIN.NS","BHARTIARTL.NS"
@@ -277,10 +278,10 @@ index_choice = st.selectbox(
     placeholder="Select an index"
 )
 
-# -------------------- ONLY RUN AFTER SELECTION --------------------
+# -------------------- RUN ONLY AFTER SELECTION --------------------
 if index_choice:
 
-    # ✅ DEFINE STOCKS FIRST
+    # ✅ DEFINE STOCKS HERE
     if index_choice == "NIFTY 50":
         stocks = nifty_50
     else:
