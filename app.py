@@ -294,45 +294,51 @@ if index_choice:
             pass
 
 
-    # 🔥 ADD HEATMAP HERE
-    st.markdown("## 🔥 Market Heatmap")
+   # -------------------- HEATMAP --------------------
+st.markdown("## 🔥 Market Heatmap")
 
-    heatmap_data = []
+heatmap_data = []
 
-    for stock in stocks:
-        try:
-            data = yf.Ticker(stock).history(period="2d")
+for stock in stocks:
+    try:
+        data = yf.Ticker(stock).history(period="2d")
 
-            price = data["Close"].iloc[-1]
-            prev = data["Close"].iloc[-2]
-            change = ((price - prev) / prev) * 100
+        if len(data) < 2:
+            continue
 
-            heatmap_data.append({
-                "Stock": stock.replace(".NS",""),
-                "Change": change
-            })
+        price = data["Close"].iloc[-1]
+        prev = data["Close"].iloc[-2]
+        change = ((price - prev) / prev) * 100
 
-        except:
-            pass
+        heatmap_data.append({
+            "Stock": stock.replace(".NS",""),
+            "Change": change
+        })
 
-    df = pd.DataFrame(heatmap_data)
+    except Exception as e:
+        st.write("Error:", e)
 
-    if not df.empty:
-        fig = px.treemap(
-            df,
-            path=["Stock"],
-            values="Change",
-            color="Change",
-            color_continuous_scale=["red", "black", "green"]
-        )
+import pandas as pd
 
-        fig.update_layout(
-            margin=dict(t=30, l=0, r=0, b=0),
-            paper_bgcolor="rgba(0,0,0,0)",
-            font_color="white"
-        )
+df = pd.DataFrame(heatmap_data)
 
-        st.plotly_chart(fig, use_container_width=True)
+if not df.empty:
+    fig = px.treemap(
+        df,
+        path=["Stock"],
+        values="Change",
+        color="Change",
+        color_continuous_scale=["red", "black", "green"]
+    )
+
+    fig.update_layout(
+        paper_bgcolor="rgba(0,0,0,0)",
+        font_color="white"
+    )
+
+    st.plotly_chart(fig, use_container_width=True)
+else:
+    st.warning("No data for heatmap")
 # -------------------- STOCK LISTS --------------------
 nifty_50 = [
     "RELIANCE.NS","TCS.NS","INFY.NS","HDFCBANK.NS","ICICIBANK.NS",
