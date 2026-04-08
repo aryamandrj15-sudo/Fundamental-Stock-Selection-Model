@@ -296,7 +296,7 @@ screener_type = st.selectbox(
 )
 
 run_screener = st.button("🚀 Run Screener")
-with st.spinner("Analyzing stocks..."):
+
 
 # stock list logic
 if index_choice == "NIFTY 50":
