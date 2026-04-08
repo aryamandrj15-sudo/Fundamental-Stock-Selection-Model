@@ -291,10 +291,8 @@ index_choice = st.selectbox(
 st.markdown("## 📊 Stock Screeners")
 
 screener_type = st.selectbox(
-    "Select Screener",
-    ["High Growth 🚀", "Undervalued 💎", "Low Debt 🛡️"],
-     Screener=None,
-    placeholder="Select a Screener..."
+    "Select Screener...",
+    ["High Growth 🚀", "Undervalued 💎", "Low Debt 🛡️"]
 )
 
 run_screener = st.button("🚀 Run Screener")
