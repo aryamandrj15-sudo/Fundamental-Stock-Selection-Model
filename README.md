@@ -1,6 +1,6 @@
 # 📊 Stock Intelligence Dashboard
 
-An interactive **fintech web application** built using **Streamlit** that allows users to analyze stocks based on key financial metrics, view live market data, and learn fundamental concepts through an integrated assistant.
+An interactive **fintech web application** built using **Streamlit** that enables users to analyze stocks, explore market trends, and understand key financial concepts through a clean and modern dashboard.
 
 ---
 
@@ -13,111 +13,107 @@ An interactive **fintech web application** built using **Streamlit** that allows
 ## ✨ Features
 
 ### 📈 Live Market Ticker
+- Displays real-time prices of **NIFTY 50 stocks**
+- Smooth scrolling ticker for a professional trading terminal experience
 
-* Displays real-time prices of **NIFTY 50 stocks**
-* Smooth scrolling ticker for a trading terminal feel
+---
 
 ### 🔍 Stock Analysis
+- Enter any stock (e.g., `TCS.NS`, `RELIANCE.NS`)
+- Fetches live stock data using **yFinance**
+- Calculates key financial indicators:
+  - 📊 EPS Growth *(simulated)*
+  - 📈 ROE (Return on Equity)
+  - ⚖️ Debt/Equity Ratio
+  - 💰 P/E Ratio
+  - 🏭 Sector P/E (comparison)
 
-* Enter any stock (e.g., `TCS.NS`, `RELIANCE.NS`)
-* Fetches live stock price using `yfinance`
-* Calculates:
-
-  * EPS Growth (simulated)
-  * ROE (Return on Equity)
-  * Debt/Equity Ratio
-  * P/E Ratio
-  * Sector P/E (comparison)
+---
 
 ### 🤖 Smart Recommendation Engine
+- Provides actionable insights:
+  - 🟢 Strong Buy  
+  - 🟡 Buy  
+  - ⚪ Hold  
+- Based on valuation logic and financial strength
 
-* Provides:
-
-  * 🟢 Strong Buy
-  * 🟡 Buy
-  * ⚪ Hold
-* Based on financial logic and valuation comparison
+---
 
 ### 📊 Detailed Insights
+- Expandable section for deeper analysis
+- Simplified explanation of financial metrics
 
-* Expandable section for deeper analysis
-* Explains financial metrics clearly
+---
 
 ### 🧠 Built-in Stock Assistant
+- Helps users understand concepts like:
+  - P/E Ratio
+  - ROE
+  - Debt/Equity
+  - RSI
+  - Buy/Sell logic  
+- Designed as a **lightweight AI-style assistant (no external API required)**
 
-* Answers key concepts like:
+---
 
-  * P/E Ratio
-  * ROE
-  * Debt/Equity
-  * RSI
-  * Buy/Sell strategies
-* Designed to simulate an AI learning assistant (no API required)
+### 📊 Market Insights
+- 🔥 Heatmap visualization of stock performance
+- 📉 Top Gainers & Losers section
+- 📊 Index-based stock view (NIFTY 50 / BANK NIFTY)
+
+---
+
+### 🧪 Stock Screeners
+- Filter stocks based on:
+  - 🚀 High Growth  
+  - 💎 Undervalued  
+  - 🛡️ Low Debt  
+- Helps identify potential investment opportunities quickly
+
+---
 
 ### 🎨 Modern UI/UX
-
-* Dark themed gradient background
-* Neon glow effects
-* Clean dashboard layout
-* Interactive components
+- Dark themed gradient interface
+- Neon glow effects & animations
+- Interactive and clean layout
+- Smooth user experience
 
 ---
 
 ## 🛠️ Tech Stack
 
-* **Frontend & Backend:** Streamlit
-* **Data Source:** yfinance
-* **Language:** Python
-* **Deployment:** Streamlit Cloud
-* **Version Control:** GitHub
-
----
-
-## 📂 Project Structure
-
-```
-Fundamental-Stock-Selection-Model/
-│
-├── app.py              # Main application file
-├── requirements.txt   # Dependencies
-└── README.md          # Project documentation
-```
-
+- **Frontend & Backend:** Streamlit  
+- **Data Source:** yFinance  
+- **Language:** Python  
+- **Visualization:** Plotly  
+- **Deployment:** Streamlit Cloud  
+- **Version Control:** GitHub  
 
 ---
 
 ## 📌 Usage
 
-* Enter stock ticker (e.g., `INFY.NS`)
-* Click **Analyze**
-* View:
-
-  * Live price
-  * Financial metrics
-  * Recommendation
-* Use **AI Helper** to understand concepts
-
----
-
-## 💡 Future Improvements
-
-* 📈 Live candlestick charts
-* 📊 Stock scoring system (0–100)
-* 🧠 AI-powered stock analysis
-* 🔍 Real fundamental data integration
-* 🌐 Multi-market support
+1. Enter a stock ticker (e.g., `INFY.NS`)
+2. Click **Analyze**
+3. View:
+   - Live price
+   - Financial metrics
+   - Recommendation
+4. Explore:
+   - Heatmap
+   - Screeners
+   - Market trends
+5. Use the **AI Helper** to understand concepts
 
 ---
 
 ## 👨‍💻 Author
 
-**Aryaman Kumar**
+**Aryaman Kumar**  
 
-* Finance & Stock Market Enthusiast
-* Aspiring Fintech Professional
-* 
 ---
 
 ## ⚠️ Disclaimer
 
-This project is for **educational purposes only** and does not constitute financial advice.
+This project is for **educational purposes only** and does not constitute financial advice. Always conduct your own research before investing.
+
