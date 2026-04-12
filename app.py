@@ -47,7 +47,7 @@ ticker_html = f"""
 .ticker span {{
     display: inline-block;
     padding-left: 100%;
-    animation: ticker 70s linear infinite;
+    animation: ticker 80s linear infinite;
 }}
 
 @keyframes ticker {{
